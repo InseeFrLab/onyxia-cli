@@ -9,9 +9,9 @@ import (
 
 	// "strings"
 
-	"onyxia-cli/src/api"
-	. "onyxia-cli/src/configuration"
-	"onyxia-cli/src/oidc"
+	"onyxia-cli/src/create-namespace/api"
+	. "onyxia-cli/src/create-namespace/configuration"
+	"onyxia-cli/src/create-namespace/oidc"
 
 	"github.com/urfave/cli/v2"
 )

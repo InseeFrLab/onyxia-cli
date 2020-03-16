@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"onyxia-cli/src/configuration"
+	"onyxia-cli/src/create-namespace/configuration"
 )
 
 func CreateNamespace(token string, namespaceName string, ownerType string, ownerId string) {
