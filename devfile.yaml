@@ -1,6 +1,6 @@
 apiVersion: 1.0.0
 metadata:
-  name: golang-exnk9
+  generateName: onyxiactl-
 attributes:
   persistVolumes: 'false'
 projects:
