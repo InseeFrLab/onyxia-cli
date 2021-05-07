@@ -1,0 +1,61 @@
+apiVersion: 1.0.0
+metadata:
+  name: golang-exnk9
+attributes:
+  persistVolumes: 'false'
+projects:
+  - name: onyxia-cli
+    source:
+      location: 'https://github.com/InseeFrLab/onyxia-cli.git'
+      type: git
+      branch: main
+components:
+  - id: golang/go/latest
+    preferences:
+      go.lintFlags: '--fast'
+      go.useLanguageServer: true
+      go.lintTool: golangci-lint
+    type: chePlugin
+    alias: go-plugin
+    env:
+      - value: 'off'
+        name: GO111MODULE
+  - mountSources: true
+    endpoints:
+      - name: 8080-tcp
+        port: 8080
+    command:
+      - sleep
+      - infinity
+    memoryLimit: 2Gi
+    type: dockerimage
+    image: golang
+    alias: go
+    env:
+      - value: $(CHE_PROJECTS_ROOT)
+        name: GOPATH
+      - value: /tmp/.cache
+        name: GOCACHE
+commands:
+  - name: 'Run :)'
+    actions:
+      - workdir: '${CHE_PROJECTS_ROOT}/onyxia-onboarding'
+        type: exec
+        command: go run .
+        component: go
+  - name: Debug current file
+    actions:
+      - referenceContent: |-
+          {
+            "version": "0.2.0",
+            "configurations": [
+              {
+                "name": "Debug current file",
+                "type": "go",
+                "request": "launch",
+                "mode": "auto",
+                "program": "${fileDirname}"
+              }
+            ]
+          }
+        type: vscode-launch
