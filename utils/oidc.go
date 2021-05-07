@@ -1,4 +1,4 @@
-package oidc
+package utils
 
 import (
 	"encoding/base64"
@@ -11,7 +11,7 @@ type ID struct {
 	Name               string
 	Preferred_username string
 	Email              string
-	Gitlab_group       []string
+	Groups       []string
 }
 
 func DisplayID(tokenString string) {
@@ -19,11 +19,11 @@ func DisplayID(tokenString string) {
 	fmt.Println(id.Name)
 	fmt.Println(id.Preferred_username)
 	fmt.Println(id.Email)
-	fmt.Println(id.Gitlab_group)
+	fmt.Println(id.Groups)
 }
 
 func DisplayGroups(id ID, auto_complete bool) {
-	for _, element := range id.Gitlab_group {
+	for _, element := range id.Groups {
 		if auto_complete == true {
 			fmt.Printf("%s\n", strings.Replace(strings.Replace(element, " ", "\\\\ ", -1), "'", `\\\'`, -1))
 		} else {
@@ -35,7 +35,7 @@ func DisplayGroups(id ID, auto_complete bool) {
 func GetGroups(id ID) []string {
 	var list []string
 
-	for _, element := range id.Gitlab_group {
+	for _, element := range id.Groups {
 		list = append(list, element)
 	}
 	return list
