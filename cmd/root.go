@@ -41,6 +41,8 @@ to quickly create a Cobra application.`,
 	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
+
+
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
@@ -49,6 +51,8 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
+	rootCmd.PersistentFlags().StringP("onyxiaURL", "o", "https://datalab.sspcloud.fr/api", "Onyxia server URL")
+	rootCmd.PersistentFlags().StringP("token", "t", viper.GetString("TOKEN"), "User's OIDC token")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -67,6 +71,6 @@ func initConfig() {
 
 	viper.AutomaticEnv() // read in environment variables that match
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
+	if err := viper.MergeInConfig(); err == nil {
 	}
 }
