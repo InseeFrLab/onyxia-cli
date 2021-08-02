@@ -67,6 +67,6 @@ func GetID(tokenString string) ID {
 }
 
 func validateTokenstring(tokenString string) bool {
-	matched, err := regexp.MatchString(`^\w{111}\.\S{1000}\S{423}$`, tokenString)
+	matched, err := regexp.MatchString(`^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$`, tokenString)
 	return ( err == nil && matched == true )
 }
