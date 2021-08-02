@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"regexp"
 )
 
 type ID struct {
@@ -51,11 +52,21 @@ func stripCtlFromUTF8(str string) string {
 }
 
 func GetID(tokenString string) ID {
+	if ( validateTokenstring(tokenString) == false ) {
+		panic("Given token string is not valid.")
+	}
+
 	dataString := strings.Split(tokenString, ".")[1]
 	data, _ := base64.RawStdEncoding.DecodeString(dataString)
+
 	var id ID
 	if err := json.Unmarshal((data), &id); err != nil {
 		panic(err)
 	}
 	return id
+}
+
+func validateTokenstring(tokenString string) bool {
+	matched, err := regexp.MatchString(`^\w{111}\.\S{1000}\S{423}$`, tokenString)
+	return ( err == nil && matched == true )
 }
