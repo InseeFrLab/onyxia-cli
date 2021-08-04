@@ -19,5 +19,5 @@ onyxiactl: test
 	go build -o onyxyactl main.go
 
 .PHONY: all # lint, test and build
-all: lint test onyxiactl
+all: pre-commit test onyxiactl
 	@echo
