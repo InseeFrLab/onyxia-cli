@@ -17,68 +17,90 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/spf13/cobra"
 	"onyxiactl/utils"
 )
 
-var catalogCmd = &cobra.Command{
-	Use:   "catalog",
-	Short: "List the available catalogs.",
-	Long:  `List the available catalogs.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		catalog := &CatalogResponse{}
-		token, _ := cmd.Flags().GetString("token")
-		onyxiaURL, _ := cmd.Flags().GetString("onyxiaURL")
+type Catalog struct {
+	ID             string    `json:"id"`
+	Description    string    `json:"description"`
+	LastUpdateTime uint      `json:"lastUpdateTime"`
+	Location       string    `json:"location"`
+	Maintainer     string    `json:"maintainer"`
+	Name           string    `json:"name"`
+	Status         string    `json:"status"`
+	Type           string    `json:"type"`
+}
 
-		JsonCatalog, e := utils.CallAPIGet(onyxiaURL+"/public/catalog", token)
-		if e != nil {
-			panic(e)
-		}
-
-		e = json.Unmarshal(JsonCatalog, &catalog)
-		if e != nil {
-			panic(e)
-		}
-
-		for _, value := range catalog.Catalogs {
-			j, _ := json.Marshal(value)
-			fmt.Println(string(j))
-		}
-	},
+type Catalogs struct {
+	Catalogs []Catalog `json:"catalogs"`
 }
 
 func init() {
 	rootCmd.AddCommand(catalogCmd)
+	catalogCmd.AddCommand(catalogListCmd)
+	catalogCmd.PersistentFlags().StringP("id", "i", "", "Catalog’s ID.")
 }
 
-type CatalogResponse struct {
-	Catalogs []struct {
-		/*		Catalog struct {
-					Packages []struct {
-						APIVersion  string   `json:"apiVersion"`
-						AppVersion  string   `json:"appVersion"`
-						Config      struct{} `json:"config"`
-						Created     string   `json:"created"`
-						Description string   `json:"description"`
-						Digest      string   `json:"digest"`
-						Home        string   `json:"home"`
-						Icon        string   `json:"icon"`
-						Name        string   `json:"name"`
-						Sources     []string `json:"sources"`
-						Urls        []string `json:"urls"`
-						Version     string   `json:"version"`
-					} `json:"packages"`
-				} `json:"catalog"`
-		*/
-		ID          string `json:"id"`
-		Description string `json:"description"`
-		//		LastUpdateTime uint   `json:"lastUpdateTime"`
-		Location   string `json:"location"`
-		Maintainer string `json:"maintainer"`
-		Name       string `json:"name"`
-		Status     string `json:"status"`
-		Type       string `json:"type"`
-	} `json:"catalogs"`
+var catalogCmd = &cobra.Command{
+	Use:   "catalog",
+	Short: "Manage the catalogs.",
+	Long:  `Manage the catalogs. By default the command lists the available catalogs.`,
+	Run:   func(cmd *cobra.Command, args []string) { catalogList(cmd) },
+}
+
+var catalogListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List the available catalogs (default).",
+	Long:  `List the available catalogs.`,
+	Run:   func(cmd *cobra.Command, args []string) { catalogList(cmd) },
+}
+
+func catalogList(cmd *cobra.Command) error {
+	token, _ := cmd.Flags().GetString("token")
+	onyxiaURL, _ := cmd.Flags().GetString("onyxiaURL")
+	id, _ := cmd.Flags().GetString("id")
+
+	if len(id) == 0 {
+		return catalogListAll(onyxiaURL+"/public/catalog", token)
+	}
+
+	return catalogListId(onyxiaURL+"/public/catalog", token, id)
+}
+
+func catalogListAll(url, token string) error {
+	catalog := &Catalogs{}
+	JsonCatalog, e := utils.CallAPIGet(url, token)
+	if e != nil {
+		panic(e)
+	}
+
+	e = json.Unmarshal(JsonCatalog, &catalog)
+	if e != nil {
+		panic(e)
+	}
+
+	for _, v := range catalog.Catalogs {
+		utils.PrintStruct(v)
+	}
+
+	return nil
+}
+
+func catalogListId(url, token, id string) error {
+	catalog := &Catalog{}
+	JsonCatalog, e := utils.CallAPIGet(url+"/"+id, token)
+	if e != nil {
+		panic(e)
+	}
+
+	e = json.Unmarshal(JsonCatalog, &catalog)
+	if e != nil {
+		panic(e)
+	}
+
+	utils.PrintStruct(catalog)
+
+	return nil
 }
