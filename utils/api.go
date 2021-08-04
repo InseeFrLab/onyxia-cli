@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"fmt"
 	"io"
 	"net/http"
+	"errors"
 )
 
 func CallAPIGet(url, token string) ([]byte, error) {
@@ -14,6 +16,9 @@ func CallAPIGet(url, token string) ([]byte, error) {
 	res, e := client.Do(req)
 	if e != nil {
 		return []byte(""), e
+	}
+	if res.StatusCode != 200 {
+		return []byte(""), errors.New(fmt.Sprintf("API returned code %d", res.StatusCode))
 	}
 	body, e := io.ReadAll(res.Body)
 
