@@ -36,7 +36,7 @@ var onboardCmd = &cobra.Command{
 		id := utils.GetID(token)
 
 		request := &OnboardingRequest{
-			
+
 		}
 
 		if (group != "") {
@@ -46,7 +46,7 @@ var onboardCmd = &cobra.Command{
 			println("Onboarding group ",group)
 			request.Group = group
 		}
-	
+
 		buf := new(bytes.Buffer)
 		json.NewEncoder(buf).Encode(request)
 		req, _ := http.NewRequest("POST", onyxiaURL+"/onboarding", buf)
