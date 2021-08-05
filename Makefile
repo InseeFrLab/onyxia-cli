@@ -5,10 +5,19 @@ help:
 	| expand -t20 \
 	| sort
 
+.PHONY: dev-prepare # Install go tools and pre-commit hooks
+dev-prepare:
+	go get github.com/securego/gosec/v2/cmd/gosec
+	go get github.com/mgechev/revive
+	go get golang.org/x/lint/golint
+	#go get github.com/go-critic/go-critic/cmd/gocritic
+	#go get github.com/akrennmair/go-imports
+	#go get github.com/golangci/golangci-lint/cmd/golangci-lint
+
+	pre-commit install
+
 .PHONY: pre-commit # Run pre-commit compliance tests
 pre-commit:
-	go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.41.1
-	pre-commit install
 	pre-commit run --all-files
 
 .PHONY: test # Run go test
@@ -19,5 +28,5 @@ onyxiactl: test
 	go build -o onyxyactl main.go
 
 .PHONY: all # lint, test and build
-all: pre-commit test onyxiactl
+all: onyxiactl
 	@echo
