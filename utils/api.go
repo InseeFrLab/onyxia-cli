@@ -9,7 +9,9 @@ import (
 
 func CallAPIGet(url, token string) ([]byte, error) {
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "Bearer "+token)
+	if token != "" {
+		req.Header.Add("Authorization", "Bearer "+token)
+	}
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
