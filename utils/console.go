@@ -21,7 +21,7 @@ func PrintMessage(m string) {
 	fmt.Print(m)
 }
 
-func PrintErrorMessageAndExit(m string) {
+func PrintErrorAndExit(m string) {
 	fmt.Print(m)
 	os.Exit(1)
 }
